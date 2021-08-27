@@ -66,17 +66,11 @@ imshow(annotatedImage)
 ```
 ![화면 캡처 2021-08-28 045011](https://user-images.githubusercontent.com/86040099/131181944-429e8661-3056-4208-be83-67edcc2cc5fa.png)
 
-###Faster R-CNN 검출 신경망 만들기
+### Faster R-CNN 검출 신경망 만들기
 Faster R-CNN 객체 검출 신경망은 하나의 특징 추출 신경망과 그 뒤에 오는 2개의 하위 신경망으로 구성됩니다.
-특징 추출 신경망은 일반적으로 ResNet-50, Inception v3과 같은 사전 훈련된 CNN입니다.
-특징 추출 신경망 뒤에 오는 첫 번째 하위 신경망은 사물 제안(영상에서 사물이 존재할 가능성이 있는 영역)을 생성하도록 훈련된 영역 제안 신경망(RPN)입니다.
-두 번째 하위 신경망은 각 사물 제안의 실제 클래스를 예측하도록 훈련됩니다.
 특징 추출에 ResNet-50을 사용합니다.
-응용 요구 사항에 따라 MobileNet v2나 ResNet-18과 같은 여타 사전 훈련된 신경망도 사용할 수 있습니다.
-
 fasterRCNNLayers를 사용하여, 사전 훈련된 특징 추출 신경망이 주어졌을 때 자동으로 Faster R-CNN 신경망을 만듭니다.
 먼저 신경망 입력 크기를 지정합니다. 
-신경망 입력 크기를 선택할 때는 신경망 자체를 실행하는 데 필요한 최소 크기, 훈련 영상의 크기, 그리고 선택한 크기에서 데이터를 처리할 때 발생하는 계산 비용을 고려해야 합니다. 
 소요되는 계산 비용을 줄이기 위해 신경망을 실행하는 데 필요한 최소 크기인 [224 224 3]으로 신경망 입력 크기를 지정하십시오.
 ```c
 inputSize = [224 224 3];
@@ -105,7 +99,7 @@ Faster R-CNN 객체 검출 신경망을 만듭니다.
 lgraph = fasterRCNNLayers(inputSize,numClasses,anchorBoxes,featureExtractionNetwork,featureLayer);
 ```
 
-###데이터 증대
+### 데이터 증대
 transform을 사용하여 영상과 영상에 해당하는 상자 레이블을 가로 방향으로 무작위로 뒤집어서 훈련 데이터를 증대합니다.
 동일한 영상을 여러 차례 읽어 들이고 증대된 훈련 데이터를 표시합니다.
 ```c
@@ -120,7 +114,7 @@ figure
 montage(augmentedData,'BorderSize',10)
 ```
 
-###훈련 데이터 전처리하기
+### 훈련 데이터 전처리하기
 증대된 훈련 데이터와 검증 데이터를 전처리하여 훈련에 사용할 수 있도록 준비합니다.
 ```c
 trainingData = transform(augmentedTrainingData,@(data)preprocessData(data,inputSize));
@@ -138,7 +132,7 @@ imshow(annotatedImage)
 ```
 ![화면 캡처 2021-08-28 054743](https://user-images.githubusercontent.com/86040099/131186894-40c4fe3a-fd92-4c4b-9e7d-1e5b2f58c985.png)
 
-###Faster R-CNN 훈련시키기
+### Faster R-CNN 훈련시키기
 trainingOptions를 사용하여 신경망 훈련 옵션을 지정합니다.
 'ValidationData'를 전처리된 검증 데이터로 설정합니다.
 'CheckpointPath'를 임시 위치로 설정합니다.
