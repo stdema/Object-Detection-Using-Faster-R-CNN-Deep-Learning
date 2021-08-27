@@ -178,3 +178,5 @@ I = insertObjectAnnotation(I,'rectangle',bboxes,scores);
 figure
 imshow(I)
 ```
+![화면 캡처 2021-08-28 055241](https://user-images.githubusercontent.com/86040099/131187336-e1b4df2d-7233-435b-ad6f-aa94e0036c48.png)
+
