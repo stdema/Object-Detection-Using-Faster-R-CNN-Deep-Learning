@@ -64,3 +64,4 @@ annotatedImage = imresize(annotatedImage,2);
 figure
 imshow(annotatedImage)
 ```
+![Uploading 화면 캡처 2021-08-28 045011.png…]()
