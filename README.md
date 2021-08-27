@@ -136,4 +136,45 @@ annotatedImage = imresize(annotatedImage,2);
 figure
 imshow(annotatedImage)
 ```
+![화면 캡처 2021-08-28 054743](https://user-images.githubusercontent.com/86040099/131186894-40c4fe3a-fd92-4c4b-9e7d-1e5b2f58c985.png)
 
+###Faster R-CNN 훈련시키기
+trainingOptions를 사용하여 신경망 훈련 옵션을 지정합니다.
+'ValidationData'를 전처리된 검증 데이터로 설정합니다.
+'CheckpointPath'를 임시 위치로 설정합니다.
+```c
+options = trainingOptions('sgdm',...
+    'MaxEpochs',10,...
+    'MiniBatchSize',2,...
+    'InitialLearnRate',1e-3,...
+    'CheckpointPath',tempdir,...
+    'ValidationData',validationData);
+```
+doTrainingAndEval이 true인 경우, trainFasterRCNNObjectDetector를 사용하여 Faster R-CNN 사물 검출기를 훈련시킵니다. 그렇지 않은 경우는 사전 훈련된 신경망을 불러오십시오.
+```c
+if doTrainingAndEval
+    % Train the Faster R-CNN detector.
+    % * Adjust NegativeOverlapRange and PositiveOverlapRange to ensure
+    %   that training samples tightly overlap with ground truth.
+    [detector, info] = trainFasterRCNNObjectDetector(trainingData,lgraph,options, ...
+        'NegativeOverlapRange',[0 0.3], ...
+        'PositiveOverlapRange',[0.6 1]);
+else
+    % Load pretrained detector for the example.
+    pretrained = load('fasterRCNNResNet50EndToEndVehicleExample.mat');
+    detector = pretrained.detector;
+end
+```
+신경망을 훈련시키는 데는 약 20분정도가 소요됩니다.
+짧게 확인해 보려면 하나의 테스트 영상에 대해 검출기를 실행하십시오.
+```c
+I = imread(testDataTbl.imageFilename{1});
+I = imresize(I,inputSize(1:2));
+[bboxes,scores] = detect(detector,I);
+```
+결과를 표시합니다.
+```c
+I = insertObjectAnnotation(I,'rectangle',bboxes,scores);
+figure
+imshow(I)
+```
